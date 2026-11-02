@@ -5,5 +5,10 @@
 - Ben/LPS1 (me) - Owner of this Fork and Coder
 - Sky - they need  their backpain fixed
 
+## Compiling
+- run `haxelib install hxpkg`
+- then `hxpkg install`
+- last but not least `haxelib run lime build windows -DofficialBuild` replace windows with ur platform (mac, linux or whatever)
+
 
 [original psych readme here](https://github.com/Graveyard-Forks/QualityPsych/blob/main/PsychReadme.md)

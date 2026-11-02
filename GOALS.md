@@ -8,3 +8,5 @@
 * [ ] - Fix Sky's backpain (?)
 * [ ] - Fix hold note gaps/overlaps
 * [ ] - Rewrite Strumline system
+* [ ] - Android Port (suggested by fnf-qt-mods-fnf-sky-mods)
+* [ ] - no DeadCodeElimination and Updated Libraries (suggested by cirocast15)
