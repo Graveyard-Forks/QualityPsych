@@ -1505,7 +1505,8 @@ class PlayState extends MusicBeatState
 					{
 						oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-						var sustainNote:Note = new Note(spawnTime + (curStepCrochet * susNote), noteColumn, oldNote, true);
+						var sustainNote:Note = new Note(spawnTime + (curStepCrochet * susNote), noteColumn, oldNote, true, false, null,
+							susNote - 1 == roundSus, curStepCrochet);
 						sustainNote.animSuffix = swagNote.animSuffix;
 						sustainNote.mustPress = swagNote.mustPress;
 						sustainNote.gfNote = swagNote.gfNote;
@@ -1516,47 +1517,11 @@ class PlayState extends MusicBeatState
 						swagNote.tail.push(sustainNote);
 
 						sustainNote.correctionOffset = swagNote.height / 2;
-						if (!PlayState.isPixelStage)
-						{
-							if (oldNote.isSustainNote)
-							{
-								oldNote.scale.y *= Note.SUSTAIN_SIZE / oldNote.frameHeight;
-								oldNote.scale.y /= playbackRate;
-								oldNote.resizeByRatio(curStepCrochet / Conductor.stepCrochet);
-							}
-
-							if (ClientPrefs.data.downScroll)
-								sustainNote.correctionOffset = 0;
-						}
-						else if (oldNote.isSustainNote)
-						{
-							oldNote.scale.y /= playbackRate;
-							oldNote.resizeByRatio(curStepCrochet / Conductor.stepCrochet);
-						}
-
-						if (sustainNote.mustPress)
-							sustainNote.x += FlxG.width / 2; // general offset
-						else if (ClientPrefs.data.middleScroll)
-						{
-							sustainNote.x += 310;
-							if (noteColumn > 1) // Up and Right
-								sustainNote.x += FlxG.width / 2 + 25;
-						}
+						if (!PlayState.isPixelStage && ClientPrefs.data.downScroll)
+							sustainNote.correctionOffset = 0;
 					}
 				}
 
-				if (swagNote.mustPress)
-				{
-					swagNote.x += FlxG.width / 2; // general offset
-				}
-				else if (ClientPrefs.data.middleScroll)
-				{
-					swagNote.x += 310;
-					if (noteColumn > 1) // Up and Right
-					{
-						swagNote.x += FlxG.width / 2 + 25;
-					}
-				}
 				if (!noteTypes.contains(swagNote.noteType))
 					noteTypes.push(swagNote.noteType);
 

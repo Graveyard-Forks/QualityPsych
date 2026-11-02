@@ -75,6 +75,8 @@ class Note extends FlxSprite
 
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
+	public var isEndNote = false;
+
 	public var noteType(default, set):String = null;
 
 	public var eventName:String = '';
@@ -248,11 +250,13 @@ class Note extends FlxSprite
 		return value;
 	}
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?createdFrom:Dynamic = null)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?createdFrom:Dynamic = null,
+			?endNote:Bool = false, segmentLength:Float = 0)
 	{
 		super();
 
 		animation = new PsychAnimationController(this);
+		isEndNote = endNote;
 
 		antialiasing = ClientPrefs.data.antialiasing;
 		if (createdFrom == null)
@@ -319,25 +323,12 @@ class Note extends FlxSprite
 			if (prevNote.isSustainNote)
 			{
 				prevNote.animation.play(colArray[prevNote.noteData % colArray.length] + 'hold');
-
-				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
-				if (createdFrom != null && createdFrom.songSpeed != null)
-					prevNote.scale.y *= createdFrom.songSpeed;
-
-				if (PlayState.isPixelStage)
-				{
-					prevNote.scale.y *= 1.19;
-					prevNote.scale.y *= (6 / height); // Auto adjust note size
-				}
+				var speed = createdFrom != null ? createdFrom.songSpeed : PlayState.instance.songSpeed;
+				prevNote.scale.y = (0.45 * segmentLength * speed) / prevNote.frameHeight;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}
 
-			if (PlayState.isPixelStage)
-			{
-				scale.y *= PlayState.daPixelZoom;
-				updateHitbox();
-			}
 			earlyHitMult = 0;
 		}
 		else if (!isSustainNote)
@@ -404,7 +395,7 @@ class Note extends FlxSprite
 		}
 
 		var skinPixel:String = skin;
-		var lastScaleY:Float = scale.y;
+		var lastScaleY:Float = PlayState.isPixelStage ? 6 : .7;
 		var skinPostfix:String = getNoteSkinPostfix();
 		var customSkin:String = skin + skinPostfix;
 		var path:String = PlayState.isPixelStage ? 'pixelUI/' : '';
