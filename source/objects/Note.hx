@@ -404,6 +404,8 @@ class Note extends FlxSprite
 				offsetX -= _lastNoteOffX;
 			}
 		} else {
+			if(ClientPrefs.data.quants && texture.length < 0)
+				skin = 'noteSkins/QUANTNOTE_assets';
 			frames = Paths.getSparrowAtlas(skin);
 			loadNoteAnims();
 			if(!isSustainNote)

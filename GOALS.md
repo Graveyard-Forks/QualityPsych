@@ -7,3 +7,4 @@
 * [ ] - Quants
 * [ ] - Fix Sky's backpain (?)
 * [ ] - Fix hold note gaps/overlaps
+* [ ] - Rewrite Strumline system
