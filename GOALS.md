@@ -4,7 +4,7 @@
 * [ ] - Action Builds
 * [ ] - BTA/Replace FlxAnimate with flixel-animate
 * [ ] - Hold Covers
-* [ ] - Quants
+* [x] - Quants
 * [ ] - Fix Sky's backpain (?)
 * [X] - Fix hold note gaps/overlaps
 * [ ] - Rewrite Strumline system

@@ -3302,7 +3302,7 @@ class PlayState extends MusicBeatState
 		if (opponentVocals.length <= 0)
 			vocals.volume = 1;
 		var strum = opponentStrums.members[note.noteData];
-		strum.playAnim('confirm', true);
+		strum.playAnim('confirm', true, note);
 		if (strum.animation.curAnim != null)
 			strum.resetAnim = strum.animation.curAnim.frameDuration * strum.animation.curAnim.numFrames;
 		note.hitByOpponent = true;
@@ -3389,7 +3389,7 @@ class PlayState extends MusicBeatState
 			var spr = playerStrums.members[note.noteData];
 			if (spr != null)
 			{
-				spr.playAnim('confirm', true);
+				spr.playAnim('confirm', true, note);
 
 				if (spr.animation.curAnim != null && cpuControlled)
 					spr.resetAnim = spr.animation.curAnim.frameDuration * spr.animation.curAnim.numFrames;

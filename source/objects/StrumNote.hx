@@ -176,7 +176,7 @@ class StrumNote extends FlxSprite
 		super.update(elapsed);
 	}
 
-	public function playAnim(anim:String, ?force:Bool = false)
+	public function playAnim(anim:String, ?force:Bool = false, ?note:Note)
 	{
 		animation.play(anim, force);
 		if (animation.curAnim != null)
@@ -185,6 +185,14 @@ class StrumNote extends FlxSprite
 			centerOrigin();
 		}
 		if (useRGBShader)
+		{
+			if (note != null)
+			{
+				rgbShader.r = note.rgbShader.r;
+				rgbShader.g = note.rgbShader.g;
+				rgbShader.b = note.rgbShader.b;
+			}
 			rgbShader.enabled = (animation.curAnim != null && animation.curAnim.name != 'static');
+		}
 	}
 }

@@ -37,6 +37,20 @@ typedef NoteSplashData =
 **/
 class Note extends FlxSprite
 {
+	// Pain pain pain
+	public static final RED:FlxColor = 0xFFFF2B32;
+	public static final BLUE:FlxColor = 0xFF0861FF;
+	public static final PURPLE:FlxColor = 0xFFC228FF;
+	public static final YELLOW:FlxColor = 0xFFFFE900;
+	public static final MAGENTA:FlxColor = 0xFFFF00CB;
+	public static final PINK:FlxColor = 0xFFFF91FF;
+	public static final ORANGE:FlxColor = 0xFFFF831E;
+	public static final TEAL:FlxColor = 0xFF00EDFF;
+	public static final GREEN:FlxColor = 0xFF3FFF3F;
+	public static final LIME:FlxColor = 0xFFA5E123;
+	public static final WHITE:FlxColor = 0xFFFFFFFF;
+	public static final GRAY:FlxColor = 0xFF878787;
+
 	// This is needed for the hardcoded note types to appear on the Chart Editor,
 	// It's also used for backwards compatibility with 0.1 - 0.3.2 charts.
 	public static final defaultNoteTypes:Array<String> = [
@@ -184,6 +198,19 @@ class Note extends FlxSprite
 
 	public function defaultRGB()
 	{
+		if (rgbShader == null)
+			return;
+
+		// quants
+		if (ClientPrefs.data.quants)
+		{
+			var quantRGB:RGBPalette = initializeQuantRGBShader(this);
+			rgbShader.r = quantRGB.r;
+			rgbShader.g = quantRGB.g;
+			rgbShader.b = quantRGB.b;
+			return;
+		}
+
 		var arr:Array<FlxColor> = ClientPrefs.data.arrowRGB[noteData];
 		if (PlayState.isPixelStage)
 			arr = ClientPrefs.data.arrowRGBPixel[noteData];
@@ -281,7 +308,7 @@ class Note extends FlxSprite
 
 		if (noteData > -1)
 		{
-			rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData));
+			rgbShader = new RGBShaderReference(this, ClientPrefs.data.quants ? initializeQuantRGBShader(this) : initializeGlobalRGBShader(noteData));
 			if (PlayState.SONG != null && PlayState.SONG.disableNoteRGB)
 				rgbShader.enabled = false;
 			texture = '';
@@ -337,6 +364,67 @@ class Note extends FlxSprite
 			centerOrigin();
 		}
 		x += offsetX;
+	}
+
+	public static var globalQuantShaders:Map<Int, RGBPalette> = new Map<Int, RGBPalette>();
+
+	//  4th, 8th, 12th, 16th, 24th, 32nd, 48th, 64th, 192nd
+	public static final quantColors:Array<FlxColor> = [RED, BLUE, PURPLE, YELLOW, PINK, ORANGE, GREEN, TEAL, GRAY];
+
+	// copied off of stepmania LOL
+	public static function getQuantIndex(chartTime:Float):Int
+	{
+		// 1 step (16th) = 12 rows
+		var row:Int = Math.round(Conductor.getStep(chartTime) * 12);
+
+		if (row % 48 == 0)
+			return 0; // 4th
+		if (row % 24 == 0)
+			return 1; // 8th
+		if (row % 16 == 0)
+			return 2; // 12th
+		if (row % 12 == 0)
+			return 3; // 16th
+		if (row % 8 == 0)
+			return 4; // 24th
+		if (row % 6 == 0)
+			return 5; // 32nd
+		if (row % 4 == 0)
+			return 6; // 48th
+		if (row % 3 == 0)
+			return 7; // 64th
+		return 8; // 192nd
+	}
+
+	public static function initializeQuantRGBShader(note:Note):RGBPalette
+	{
+		// sustains use the time of their head note, so a whole hold keeps one color ig because who tf would do it seperately for the holds
+		var head:Note = note;
+		if (note.parent != null)
+		{
+			head = note.parent;
+		}
+		else
+		{
+			while (head.isSustainNote && head.prevNote != null && head.prevNote != head)
+				head = head.prevNote;
+		}
+
+		var chartTime:Float = head.strumTime - (head.inEditor ? 0 : ClientPrefs.data.noteOffset);
+		var quant:Int = getQuantIndex(chartTime);
+
+		var palette:RGBPalette = globalQuantShaders[quant];
+		if (palette == null)
+		{
+			var color:FlxColor = quantColors[quant];
+			palette = new RGBPalette();
+			palette.r = color; // body
+			palette.g = FlxColor.WHITE; // arrow highlight
+			palette.b = color.getDarkened(0.7); // outline
+			globalQuantShaders[quant] = palette;
+		}
+
+		return palette;
 	}
 
 	public static function initializeGlobalRGBShader(noteData:Int)
@@ -520,10 +608,7 @@ class Note extends FlxSprite
 			canBeHit = false;
 
 			if (!wasGoodHit && strumTime <= Conductor.songPosition)
-			{
-				if (!isSustainNote || (prevNote.wasGoodHit && !ignoreNote))
-					wasGoodHit = true;
-			}
+				wasGoodHit = true;
 		}
 
 		if (tooLate && !inEditor)
@@ -586,14 +671,14 @@ class Note extends FlxSprite
 
 			if (myStrum.downScroll)
 			{
-				if (y - offset.y * scale.y + height >= center)
+				if (y + height >= center)
 				{
 					swagRect.width = frameWidth;
 					swagRect.height = (center - y) / scale.y;
 					swagRect.y = frameHeight - swagRect.height;
 				}
 			}
-			else if (y + offset.y * scale.y <= center)
+			else if (y <= center)
 			{
 				swagRect.y = (center - y) / scale.y;
 				swagRect.width = width / scale.x;
