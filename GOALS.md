@@ -6,3 +6,4 @@
 * [ ] - Hold Covers
 * [ ] - Quants
 * [ ] - Fix Sky's backpain (?)
+* [ ] - Fix hold note gaps/overlaps
