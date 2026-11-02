@@ -4,6 +4,7 @@
 ## Credits
 - Ben/LPS1 (me) - Owner of this Fork and Coder
 - Sky - they need  their backpain fixed
+- ADA_Funni (i borrowed your rgb shader from discord sooo heres some credits)
 
 ## Compiling
 - run `haxelib install hxpkg`

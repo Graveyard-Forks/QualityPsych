@@ -1840,7 +1840,9 @@ class PlayState extends MusicBeatState
 		if (healthBar.bounds.max != null && health > healthBar.bounds.max)
 			health = healthBar.bounds.max;
 
-		updateIconsScale(elapsed);
+		if (!ClientPrefs.data.mimimizeAnimations)
+			updateIconsScale(elapsed);
+
 		updateIconsPosition();
 
 		if (startedCountdown && !paused)
@@ -1879,7 +1881,7 @@ class PlayState extends MusicBeatState
 				timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
 		}
 
-		if (camZooming)
+		if (camZooming && !ClientPrefs.data.mimimizeAnimations)
 		{
 			FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, Math.exp(-elapsed * 3.125 * camZoomingDecay * playbackRate));
 			camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, Math.exp(-elapsed * 3.125 * camZoomingDecay * playbackRate));
@@ -2271,8 +2273,11 @@ class PlayState extends MusicBeatState
 					if (flValue2 == null)
 						flValue2 = 0.03;
 
-					FlxG.camera.zoom += flValue1;
-					camHUD.zoom += flValue2;
+					if (!ClientPrefs.data.mimimizeAnimations)
+					{
+						FlxG.camera.zoom += flValue1;
+						camHUD.zoom += flValue2;
+					}
 				}
 
 			case 'Play Animation':
@@ -2778,6 +2783,8 @@ class PlayState extends MusicBeatState
 			Paths.image(uiFolder + 'num' + i + uiPostfix);
 	}
 
+	public var localComboOffsets:Array<Float> = [0.0, 0.0];
+
 	private function popUpScore(note:Note = null):Void
 	{
 		var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.data.ratingOffset);
@@ -2835,25 +2842,32 @@ class PlayState extends MusicBeatState
 		rating.screenCenter();
 		rating.x = placement - 40;
 		rating.y -= 60;
-		rating.acceleration.y = 550 * playbackRate * playbackRate;
-		rating.velocity.y -= FlxG.random.int(140, 175) * playbackRate;
-		rating.velocity.x -= FlxG.random.int(0, 10) * playbackRate;
-		rating.visible = (!ClientPrefs.data.hideHud && showRating);
-		rating.x += ClientPrefs.data.comboOffset[0];
-		rating.y -= ClientPrefs.data.comboOffset[1];
+		if (!ClientPrefs.data.mimimizeAnimations)
+		{
+			rating.acceleration.y = 550 * playbackRate * playbackRate;
+			rating.velocity.y -= FlxG.random.int(140, 175) * playbackRate;
+			rating.velocity.x -= FlxG.random.int(0, 10) * playbackRate;
+			rating.visible = (!ClientPrefs.data.hideHud && showRating);
+		}
+		rating.x += ClientPrefs.data.comboOffset[0] + localComboOffsets[0];
+		rating.y -= ClientPrefs.data.comboOffset[1] + localComboOffsets[1];
 		rating.antialiasing = antialias;
 
 		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(uiFolder + 'combo' + uiPostfix));
 		comboSpr.screenCenter();
 		comboSpr.x = placement;
-		comboSpr.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
-		comboSpr.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
+		if (!ClientPrefs.data.mimimizeAnimations)
+		{
+			comboSpr.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
+			comboSpr.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
+			comboSpr.velocity.x += FlxG.random.int(1, 10) * playbackRate;
+		}
 		comboSpr.visible = (!ClientPrefs.data.hideHud && showCombo);
-		comboSpr.x += ClientPrefs.data.comboOffset[0];
-		comboSpr.y -= ClientPrefs.data.comboOffset[1];
+		comboSpr.x += ClientPrefs.data.comboOffset[0] + localComboOffsets[0];
+		comboSpr.y -= ClientPrefs.data.comboOffset[1] + localComboOffsets[1];
 		comboSpr.antialiasing = antialias;
 		comboSpr.y += 60;
-		comboSpr.velocity.x += FlxG.random.int(1, 10) * playbackRate;
+
 		comboGroup.add(rating);
 
 		if (!PlayState.isPixelStage)
@@ -2889,9 +2903,12 @@ class PlayState extends MusicBeatState
 				numScore.setGraphicSize(Std.int(numScore.width * daPixelZoom));
 			numScore.updateHitbox();
 
-			numScore.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
-			numScore.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
-			numScore.velocity.x = FlxG.random.float(-5, 5) * playbackRate;
+			if (!ClientPrefs.data.mimimizeAnimations)
+			{
+				numScore.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
+				numScore.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
+				numScore.velocity.x = FlxG.random.float(-5, 5) * playbackRate;
+			}
 			numScore.visible = !ClientPrefs.data.hideHud;
 			numScore.antialiasing = antialias;
 
@@ -3546,11 +3563,14 @@ class PlayState extends MusicBeatState
 		if (generatedMusic)
 			notes.sort(FlxSort.byY, ClientPrefs.data.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 
-		iconP1.scale.set(1.2, 1.2);
-		iconP2.scale.set(1.2, 1.2);
+		if (!ClientPrefs.data.mimimizeAnimations)
+		{
+			iconP1.scale.set(1.2, 1.2);
+			iconP2.scale.set(1.2, 1.2);
 
-		iconP1.updateHitbox();
-		iconP2.updateHitbox();
+			iconP1.updateHitbox();
+			iconP2.updateHitbox();
+		}
 
 		characterBopper(curBeat);
 
@@ -3592,12 +3612,14 @@ class PlayState extends MusicBeatState
 			if (generatedMusic && !endingSong && !isCameraOnForcedPos)
 				moveCameraSection();
 
-			if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.data.camZooms)
+			if (!ClientPrefs.data.mimimizeAnimations)
 			{
-				FlxG.camera.zoom += 0.015 * camZoomingMult;
-				camHUD.zoom += 0.03 * camZoomingMult;
+				if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.data.camZooms)
+				{
+					FlxG.camera.zoom += 0.015 * camZoomingMult;
+					camHUD.zoom += 0.03 * camZoomingMult;
+				}
 			}
-
 			if (SONG.notes[curSection].changeBPM)
 			{
 				Conductor.bpm = SONG.notes[curSection].bpm;
