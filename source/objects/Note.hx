@@ -433,11 +433,6 @@ class Note extends FlxSprite
 		}
 		else
 		{
-			var skin = skin;
-			if (ClientPrefs.data.quants && (skin == '' || skin.length < 1 || skin == 'noteSkins/NOTE_assets'))
-			{
-				skin = 'noteSkins/QUANTNOTE_assets';
-			}
 			frames = Paths.getSparrowAtlas(skin);
 			loadNoteAnims();
 			if (!isSustainNote)

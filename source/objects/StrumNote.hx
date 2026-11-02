@@ -117,11 +117,6 @@ class StrumNote extends FlxSprite
 		}
 		else
 		{
-			var texture = texture;
-			if (ClientPrefs.data.quants && (texture == '' || texture.length < 1 || texture == 'noteSkins/NOTE_assets'))
-			{
-				texture = 'noteSkins/QUANTNOTE_assets';
-			}
 			frames = Paths.getSparrowAtlas(texture);
 
 			animation.addByPrefix('green', 'arrowUP');
