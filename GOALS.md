@@ -1,7 +1,7 @@
 # TODO LIST - current plans
 
 * [X] - Add HXPKG for easy compiling
-* [ ] - Action Builds
+* [X] - Action Builds
 * [ ] - BTA/Replace FlxAnimate with flixel-animate
 * [ ] - Hold Covers
 * [x] - Quants
