@@ -1807,6 +1807,34 @@ class PlayState extends MusicBeatState
 		}
 		else
 			FlxG.camera.followLerp = 0;
+		if (unspawnNotes[0] != null)
+		{
+			var time:Float = spawnTime * playbackRate;
+			if (songSpeed < 1)
+				time /= songSpeed;
+			if (unspawnNotes[0].multSpeed < 1)
+				time /= unspawnNotes[0].multSpeed;
+
+			while (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < time)
+			{
+				var dunceNote:Note = unspawnNotes[0];
+				notes.insert(0, dunceNote);
+				dunceNote.spawned = true;
+
+				callOnLuas('onSpawnNote', [
+					notes.members.indexOf(dunceNote),
+					dunceNote.noteData,
+					dunceNote.noteType,
+					dunceNote.isSustainNote,
+					dunceNote.strumTime
+				]);
+				callOnHScript('onSpawnNote', [dunceNote]);
+
+				var index:Int = unspawnNotes.indexOf(dunceNote);
+				unspawnNotes.splice(index, 1);
+			}
+		}
+
 		callOnScripts('onUpdate', [elapsed]);
 
 		super.update(elapsed);
@@ -1898,34 +1926,6 @@ class PlayState extends MusicBeatState
 			trace("RESET = True");
 		}
 		doDeathCheck();
-
-		if (unspawnNotes[0] != null)
-		{
-			var time:Float = spawnTime * playbackRate;
-			if (songSpeed < 1)
-				time /= songSpeed;
-			if (unspawnNotes[0].multSpeed < 1)
-				time /= unspawnNotes[0].multSpeed;
-
-			while (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < time)
-			{
-				var dunceNote:Note = unspawnNotes[0];
-				notes.insert(0, dunceNote);
-				dunceNote.spawned = true;
-
-				callOnLuas('onSpawnNote', [
-					notes.members.indexOf(dunceNote),
-					dunceNote.noteData,
-					dunceNote.noteType,
-					dunceNote.isSustainNote,
-					dunceNote.strumTime
-				]);
-				callOnHScript('onSpawnNote', [dunceNote]);
-
-				var index:Int = unspawnNotes.indexOf(dunceNote);
-				unspawnNotes.splice(index, 1);
-			}
-		}
 
 		if (generatedMusic)
 		{
