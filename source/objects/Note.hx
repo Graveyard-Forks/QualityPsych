@@ -351,7 +351,7 @@ class Note extends FlxSprite
 			{
 				prevNote.animation.play(colArray[prevNote.noteData % colArray.length] + 'hold');
 				var speed = createdFrom != null ? createdFrom.songSpeed : PlayState.instance.songSpeed;
-				prevNote.scale.y = (0.45 * segmentLength * speed) / prevNote.frameHeight;
+				prevNote.scale.y = (0.45 * segmentLength * speed / ClientPrefs.getGameplaySetting('songspeed')) / prevNote.frameHeight;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}

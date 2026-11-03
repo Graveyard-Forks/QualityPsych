@@ -1807,6 +1807,44 @@ class PlayState extends MusicBeatState
 		}
 		else
 			FlxG.camera.followLerp = 0;
+		
+
+			if (startedCountdown && !paused)
+		{
+			Conductor.songPosition += elapsed * 1000 * playbackRate;
+			if (Conductor.songPosition >= Conductor.offset)
+			{
+				Conductor.songPosition = FlxMath.lerp(FlxG.sound.music.time + Conductor.offset, Conductor.songPosition, Math.exp(-elapsed * 5));
+				var timeDiff:Float = Math.abs((FlxG.sound.music.time + Conductor.offset) - Conductor.songPosition);
+				if (timeDiff > 1000 * playbackRate)
+					Conductor.songPosition = Conductor.songPosition + 1000 * FlxMath.signOf(timeDiff);
+			}
+		}
+
+		if (startingSong)
+		{
+			if (startedCountdown && Conductor.songPosition >= Conductor.offset)
+				startSong();
+			else if (!startedCountdown)
+				Conductor.songPosition = -Conductor.crochet * 5 + Conductor.offset;
+		}
+		else if (!paused && updateTime)
+		{
+			var curTime:Float = Math.max(0, Conductor.songPosition - ClientPrefs.data.noteOffset);
+			songPercent = (curTime / songLength);
+
+			var songCalc:Float = (songLength - curTime);
+			if (ClientPrefs.data.timeBarType == 'Time Elapsed')
+				songCalc = curTime;
+
+			var secondsTotal:Int = Math.floor(songCalc / 1000);
+			if (secondsTotal < 0)
+				secondsTotal = 0;
+
+			if (ClientPrefs.data.timeBarType != 'Song Name')
+				timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
+		}
+
 		if (unspawnNotes[0] != null)
 		{
 			var time:Float = spawnTime * playbackRate;
@@ -1873,41 +1911,7 @@ class PlayState extends MusicBeatState
 
 		updateIconsPosition();
 
-		if (startedCountdown && !paused)
-		{
-			Conductor.songPosition += elapsed * 1000 * playbackRate;
-			if (Conductor.songPosition >= Conductor.offset)
-			{
-				Conductor.songPosition = FlxMath.lerp(FlxG.sound.music.time + Conductor.offset, Conductor.songPosition, Math.exp(-elapsed * 5));
-				var timeDiff:Float = Math.abs((FlxG.sound.music.time + Conductor.offset) - Conductor.songPosition);
-				if (timeDiff > 1000 * playbackRate)
-					Conductor.songPosition = Conductor.songPosition + 1000 * FlxMath.signOf(timeDiff);
-			}
-		}
-
-		if (startingSong)
-		{
-			if (startedCountdown && Conductor.songPosition >= Conductor.offset)
-				startSong();
-			else if (!startedCountdown)
-				Conductor.songPosition = -Conductor.crochet * 5 + Conductor.offset;
-		}
-		else if (!paused && updateTime)
-		{
-			var curTime:Float = Math.max(0, Conductor.songPosition - ClientPrefs.data.noteOffset);
-			songPercent = (curTime / songLength);
-
-			var songCalc:Float = (songLength - curTime);
-			if (ClientPrefs.data.timeBarType == 'Time Elapsed')
-				songCalc = curTime;
-
-			var secondsTotal:Int = Math.floor(songCalc / 1000);
-			if (secondsTotal < 0)
-				secondsTotal = 0;
-
-			if (ClientPrefs.data.timeBarType != 'Song Name')
-				timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
-		}
+	
 
 		if (camZooming && !ClientPrefs.data.mimimizeAnimations)
 		{
