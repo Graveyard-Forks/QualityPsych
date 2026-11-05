@@ -9,6 +9,6 @@
 * [X] - Fix hold note gaps/overlaps
 * [ ] - Rewrite Strumline system
 * [ ] - Android Port (suggested by fnf-qt-mods-fnf-sky-mods)
-* [ ] - no DeadCodeElimination and Updated Libraries (suggested by cirocast15)
+* [50%] - no DeadCodeElimination and Updated Libraries (suggested by cirocast15)
 - [X] - Add Minimize animations Option
 - [X] - Add PlayStates own combo Offset for scripts

@@ -4,15 +4,15 @@
 		"pkgs": [
 			{
 				"name": "lime",
-				"version": "8.1.2"
+				"version": "8.2.1"
 			},
 			{
 				"name": "openfl",
-				"version": "9.3.3"
+				"version": "9.4.2"
 			},
 			{
 				"name": "flixel",
-				"version": "5.6.1"
+				"version": "5.7.0"
 			},
 			{
 				"name": "flixel-addons",
@@ -61,6 +61,10 @@
 				"name": "flxanimate",
 				"link": "https://github.com/Dot-Stuff/flxanimate",
 				"branch": "768740a56b26aa0c072720e0d1236b94afe68e3e"
+			},
+			{
+				"name": "extension-androidtools",
+				"link": "https://github.com/LimeExtensions/extension-androidtools.git"
 			}
 		]
 	}
