@@ -3,7 +3,7 @@
 
 ## Credits
 - Ben/LPS1 (me) - Owner of this Fork and Coder
-- Sky - they need  their backpain fixed
+- Sky - they need  their backpain fixed andddd thank you for helping me test the android build + everyone else on the psych server because you are cool
 - ADA_Funni (i borrowed your rgb shader from discord sooo heres some credits)
 
 ## Compiling
