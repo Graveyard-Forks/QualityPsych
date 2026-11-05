@@ -285,11 +285,16 @@ class Paths
 	inline static public function getTextFromFile(key:String, ?ignoreMods:Bool = false):String
 	{
 		var path:String = getPath(key, TEXT, !ignoreMods);
-		#if sys
-		return (FileSystem.exists(path)) ? File.getContent(path) : null;
-		#else
-		return (OpenFlAssets.exists(path, TEXT)) ? Assets.getText(path) : null;
-		#end
+		var content = null;
+
+		if(FileSystem.exists(path))
+			content = File.getContent(path);
+		else if(OpenFlAssets.exists(path, TEXT))
+			content = Assets.getText(path);
+		
+		if(content == null)
+			trace('TEXT FILE $path | $key (ignores mods? $ignoreMods) not found, check again if it exists lol');
+		return content;
 	}
 
 	inline static public function font(key:String)
