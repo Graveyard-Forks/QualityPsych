@@ -1,5 +1,6 @@
 package debug;
 
+import openfl.system.Capabilities;
 import flixel.FlxG;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
@@ -22,6 +23,8 @@ class FPSCounter extends TextField
 	public var memoryMegas(get, never):Float;
 
 	@:noCompletion private var times:Array<Float>;
+
+	public var os = Capabilities.os;
 
 	public function new(x:Float = 10, y:Float = 10, color:Int = 0x000000)
 	{
@@ -62,7 +65,7 @@ class FPSCounter extends TextField
 
 	public dynamic function updateText():Void { // so people can override it in hscript
 		text = 'FPS: ${currentFPS}'
-		+ '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}' + '\n ';
+		+ '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}' + '\nOS: $os ' + '(' + Capabilities.cpuArchitecture + ')';
 
 		textColor = 0xFFFFFFFF;
 		if (currentFPS < FlxG.drawFramerate * 0.5)

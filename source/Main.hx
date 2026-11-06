@@ -1,8 +1,9 @@
 package;
 
-import backend.android.AndroidUtil;
+
 #if android
 import extension.androidtools.content.Context;
+import backend.android.AndroidUtil;
 #end
 
 import debug.FPSCounter;
@@ -72,16 +73,23 @@ class Main extends Sprite
 	{
 		super();
 
+		#if CRASH_HANDLER
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
+		#end
+		
 		#if (cpp && windows)
 		backend.Native.fixScaling();
 		#end
 
+
+
 		// Credits to MAJigsaw77 (he's the og author for this code)
 		#if android
-
+		final cwdAndroid = Path.addTrailingSlash(Context.getExternalFilesDir());
 		AndroidUtil.requestDefaultPermissions();
 		AndroidUtil.init();
-		Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
+		Sys.setCwd(cwdAndroid);
+		Application.current.window.alert('path to cwd is ' + cwdAndroid);
 		#elseif ios
 		Sys.setCwd(lime.system.System.applicationStorageDirectory);
 		#end
@@ -184,9 +192,7 @@ class Main extends Sprite
 		FlxG.game.focusLostFramerate = 60;
 		FlxG.keys.preventDefaultKeys = [TAB];
 		
-		#if CRASH_HANDLER
-		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
-		#end
+	
 
 		#if DISCORD_ALLOWED
 		DiscordClient.prepare();
